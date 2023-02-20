@@ -61,7 +61,10 @@ func getObject(ctx *cli.Context) error {
 	startIndex := ctx.Uint64("start")
 	endIndex := ctx.Uint64("end")
 	option := spClient.DownloadOption{}
-	option.SetRange(int64(startIndex), int64(endIndex))
+	err = option.SetRange(int64(startIndex), int64(endIndex))
+	if err != nil {
+		return err
+	}
 
 	err = s3Client.FGetObject(c, bucketName, objectName, filePath, option, spClient.NewAuthInfo(false, ""))
 	if err != nil {

@@ -196,6 +196,7 @@ func getChallengeInfo(ctx *cli.Context) error {
 		_, err = io.Copy(fd, res.PieceData)
 		fd.Close()
 		if err != nil {
+			log.Println("err:", err.Error())
 			return err
 		}
 
