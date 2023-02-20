@@ -3,7 +3,7 @@ module github.com/bnb-chain/greenfield-sdk-go
 go 1.18
 
 require (
-	github.com/bnb-chain/greenfield-go-sdk v0.0.0-20230220070621-ae491d572c1c
+	github.com/bnb-chain/greenfield-go-sdk v0.0.0-20230220095758-d44c548f1cf4
 	github.com/bnb-chain/greenfield-storage-provider v0.0.0-20230117021020-392fc2dd84c7
 	github.com/cosmos/cosmos-sdk v0.46.4
 	github.com/ethereum/go-ethereum v1.10.19
@@ -25,7 +25,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/bnb-chain/greenfield v0.0.5 // indirect
-	github.com/bnb-chain/greenfield-common/go v0.0.0-20230220061840-40cd33ee8e60 // indirect
+	github.com/bnb-chain/greenfield-common/go v0.0.0-20230220095438-937c5b838b69 // indirect
 	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
@@ -82,7 +82,7 @@ require (
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/mimoo/StrobeGo v0.0.0-20210601165009-122bf33a46e0 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
