@@ -21,12 +21,17 @@ Download a specific object from storage provider
 
 Examples:
 # download a file
-$ gnfd get gnfd://bucketname/file.txt file.txt `,
+$ gnfd get --start 1  --end 4000 gnfd://bucketname/file.txt file.txt `,
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "filepath",
-				Value: "",
-				Usage: "file path info to be uploaded",
+			&cli.Uint64Flag{
+				Name:  "start",
+				Value: 0,
+				Usage: "start offset of download range",
+			},
+			&cli.Uint64Flag{
+				Name:  "end",
+				Value: 0,
+				Usage: "end offset of download range",
 			},
 		},
 	}
@@ -50,11 +55,15 @@ func getObject(ctx *cli.Context) error {
 	c, cancelCreateBucket := context.WithCancel(globalContext)
 	defer cancelCreateBucket()
 
-	// filePath := ctx.String("filepath")
 	filePath := ctx.Args().Get(1)
 	log.Printf("download object %s into file:%s \n", objectName, filePath)
 
-	err = s3Client.FGetObject(c, bucketName, objectName, filePath, spClient.GetObjectOptions{}, spClient.NewAuthInfo(false, ""))
+	startIndex := ctx.Uint64("start")
+	endIndex := ctx.Uint64("end")
+	option := spClient.DownloadOption{}
+	option.SetRange(int64(startIndex), int64(endIndex))
+
+	err = s3Client.FGetObject(c, bucketName, objectName, filePath, option, spClient.NewAuthInfo(false, ""))
 	if err != nil {
 		return err
 	}

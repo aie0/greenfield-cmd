@@ -3,12 +3,12 @@ module github.com/bnb-chain/greenfield-sdk-go
 go 1.18
 
 require (
-	github.com/bnb-chain/greenfield-go-sdk v0.0.3
+	github.com/bnb-chain/greenfield-go-sdk v0.0.0-20230220070621-ae491d572c1c
 	github.com/bnb-chain/greenfield-storage-provider v0.0.0-20230117021020-392fc2dd84c7
 	github.com/cosmos/cosmos-sdk v0.46.4
 	github.com/ethereum/go-ethereum v1.10.19
 	github.com/evmos/ethermint v0.6.1-0.20220919141022-34226aa7b1fa
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.3.0
 )
@@ -25,7 +25,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/bnb-chain/greenfield v0.0.5 // indirect
-	github.com/bnb-chain/greenfield-common/go v0.0.0-20230209233558-ff9447ce4045 // indirect
+	github.com/bnb-chain/greenfield-common/go v0.0.0-20230220061840-40cd33ee8e60 // indirect
 	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
@@ -77,8 +77,8 @@ require (
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
-	github.com/klauspost/cpuid/v2 v2.1.1 // indirect
-	github.com/klauspost/reedsolomon v1.11.6 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
+	github.com/klauspost/reedsolomon v1.11.7 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

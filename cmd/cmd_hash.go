@@ -28,9 +28,15 @@ $ gnfd get-hash --segSize 16  --shards 6 /home/test.text `,
 				Required: true,
 			},
 			&cli.IntFlag{
-				Name:     "shards",
-				Value:    6,
-				Usage:    "the ec encode shard number",
+				Name:     "dataShards",
+				Value:    4,
+				Usage:    "the ec encode data shard number",
+				Required: true,
+			},
+			&cli.IntFlag{
+				Name:     "parityShards",
+				Value:    2,
+				Usage:    "the ec encode parity shard number",
 				Required: true,
 			},
 		},
@@ -60,9 +66,14 @@ func computeHashRoot(ctx *cli.Context) error {
 		return errors.New("segment size should be more than 0 ")
 	}
 
-	ecShards := ctx.Int("shards")
-	if ecShards <= 0 {
-		return errors.New("encode shards number should be more than 0 ")
+	dataShards := ctx.Int("dataShards")
+	if dataShards <= 0 {
+		return errors.New("data shards number should be more than 0 ")
+	}
+
+	parityShards := ctx.Int("parityShards")
+	if parityShards <= 0 {
+		return errors.New("parity shards number should be more than 0 ")
 	}
 
 	s3Client, err := NewClient(ctx)
@@ -70,7 +81,7 @@ func computeHashRoot(ctx *cli.Context) error {
 		return err
 	}
 
-	priHash, secondHash, _, err := s3Client.GetPieceHashRoots(fReader, int64(segmentSize*1024*1024), ecShards)
+	priHash, secondHash, _, err := s3Client.GetPieceHashRoots(fReader, int64(segmentSize*1024*1024), dataShards, parityShards)
 	if err != nil {
 		return err
 	}
