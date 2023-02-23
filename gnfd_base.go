@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	lib "github.com/bnb-chain/greenfield-common/go"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -335,7 +336,7 @@ func (c *Client) generateURL(bucketName string, objectName string, relativePath 
 		} else {
 			urlStr = scheme + "://" + host + "/"
 		}
-		
+
 		if objectName != "" {
 			urlStr += s3utils.EncodePath(objectName)
 		}
@@ -406,7 +407,7 @@ func (c *Client) GetApproval(ctx context.Context, bucketName, objectName string,
 // GetPieceHashRoots return primary pieces Hash and secondary piece Hash roots list and object size
 // It is used for generate meta of object on the chain
 func (c *Client) GetPieceHashRoots(reader io.Reader, segSize int64, ecShards int) (string, []string, int64, error) {
-	pieceHashRoots, size, err := SplitAndComputerHash(reader, segSize, ecShards)
+	pieceHashRoots, size, err := lib.SplitAndComputerHash(reader, segSize, ecShards)
 	if err != nil {
 		log.Println("get hash roots fail", err.Error())
 		return "", nil, 0, err

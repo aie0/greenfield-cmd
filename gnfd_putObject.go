@@ -39,29 +39,7 @@ func (t *UploadResult) String() string {
 	return fmt.Sprintf("upload finish, bucket name  %s, objectname %s, etag %s", t.BucketName, t.ObjectName, t.ETag)
 }
 
-// PrePutObject get approval of creating object and send txn to greenfield chain
-func (c *Client) PrePutObject(ctx context.Context, bucketName, objectName string,
-	meta PutObjectMeta, reader io.Reader, authInfo signer.AuthInfo) (string, error) {
-	// get approval of creating bucket from sp
-	signature, err := c.GetApproval(ctx, bucketName, objectName, authInfo)
-	if err != nil {
-		return "", err
-	}
-	log.Println("get approve from sp finish,signature is: ", signature)
-
-	// get hash and objectSize from reader
-	_, _, err = SplitAndComputerHash(reader, SegmentSize, EncodeShards)
-	if err != nil {
-		return "", err
-	}
-
-	// TODO(leo) call chain sdk to send a createObject txn to greenfield
-	// return txnHash
-
-	return "", err
-}
-
-// PutObject supports the second stage of uploading the object to bucket.
+c// PutObject supports the second stage of uploading the object to bucket.
 func (c *Client) PutObject(ctx context.Context, bucketName, objectName, txnHash string,
 	reader io.Reader, meta ObjectMeta, authInfo signer.AuthInfo) (res UploadResult, err error) {
 	if txnHash == "" {
@@ -124,7 +102,7 @@ func (c *Client) FPutObject(ctx context.Context, bucketName, objectName,
 	meta := ObjectMeta{
 		ObjectSize: stat.Size(),
 	}
-	
+
 	if contentType == "" {
 		meta.ContentType = "application/octet-stream"
 	} else {
