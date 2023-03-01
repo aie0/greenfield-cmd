@@ -35,10 +35,10 @@ func ListSP(ctx *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("sp list below:")
+	fmt.Println("sp list:")
 	for id, info := range spInfo {
-		fmt.Println(fmt.Sprintf("sp [ %d ] , operator address: %s , endpoint :%s,"+
-			" Status: %s", id, info.OperatorAddress, info.Endpoint, info.Status))
+		fmt.Println(fmt.Sprintf("sp[%d]: operator-address:%s, endpoint:%s,"+
+			" Status:%s", id, info.OperatorAddress, info.Endpoint, info.Status))
 	}
 	return nil
 }
