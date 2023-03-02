@@ -81,21 +81,20 @@ func createBucket(ctx *cli.Context) error {
 
 	if primarySpAddrStr == "" {
 		spList := gnfdRep.GetSps()
-		existPrimarySp := false
+		findPrimarySp := false
 		for _, sp := range spList {
-			if sp.Description.Moniker == "sp0" {
-				existPrimarySp = true
+			if sp.GetEndpoint() == client.SPClient.GetURL().Hostname() {
+				findPrimarySp = true
 				primarySpAddrStr = sp.GetOperatorAddress()
 				if sp.Status.String() != "STATUS_IN_SERVICE" {
 					return errors.New("primary sp")
 				}
+				break
 			}
 		}
-
-		if !existPrimarySp {
-			return errors.New("not exist primary sp")
+		if !findPrimarySp {
+			return errors.New("can not find the right primary sp, please set it using  --primarySP")
 		}
-
 	}
 
 	primarySpAddr := sdk.MustAccAddressFromHex(primarySpAddrStr)

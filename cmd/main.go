@@ -28,8 +28,9 @@ func main() {
 		),
 		altsrc.NewStringFlag(
 			&cli.StringFlag{
-				Name:  "host",
-				Usage: "primary host",
+				Name:     "host",
+				Usage:    "primary host",
+				Required: false,
 			},
 		),
 		altsrc.NewStringFlag(
