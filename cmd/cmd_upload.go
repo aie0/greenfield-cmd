@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/bnb-chain/greenfield-go-sdk/client/gnfdclient"
 	spClient "github.com/bnb-chain/greenfield-go-sdk/client/sp"
@@ -76,6 +77,28 @@ $ gnfd put --txnhash xx  file.txt gnfd://bucket-name/file.txt`,
 	}
 }
 
+func cmdPutObjV2() *cli.Command {
+	return &cli.Command{
+		Name:      "create-put",
+		Action:    createAndPutObject,
+		Usage:     "upload an object",
+		ArgsUsage: "[filePath] OBJECT-URL",
+		Description: `
+Upload the payload and send with txn to storage provider
+
+Examples:
+# the second phase of putObject: upload file to storage provider
+$ gnfd  create-put file.txt gnfd://bucket-name/file.txt`,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:  "content-type",
+				Value: "application/xml",
+				Usage: "indicate object content-type",
+			},
+		},
+	}
+}
+
 // uploadObject upload the payload of file, finish the third stage of putObject
 func uploadObject(ctx *cli.Context) error {
 	if ctx.NArg() != 2 {
@@ -129,6 +152,84 @@ func uploadObject(ctx *cli.Context) error {
 	}
 
 	fmt.Println("upload object successfully:", res.String())
+	return nil
+}
+
+// uploadObject upload the payload of file, finish the third stage of putObject
+func createAndPutObject(ctx *cli.Context) error {
+	urlInfo := ctx.Args().Get(1)
+	bucketName, objectName, err := getObjAndBucketNames(urlInfo)
+	if err != nil {
+		return nil
+	}
+
+	// read the local file payload
+	filePath := ctx.Args().Get(0)
+	exists, objectSize, err := pathExists(filePath)
+	if !exists {
+		return fmt.Errorf("upload file not exists")
+	} else if objectSize > int64(5*1024*1024*1024) {
+		return fmt.Errorf("upload file larger than 5G ")
+	}
+
+	// Open the referenced file.
+	fileReader, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer fileReader.Close()
+
+	gnfdClient, err := NewClient(ctx)
+	if err != nil {
+		log.Println("failed to create client", err.Error())
+		return err
+	}
+
+	start := time.Now()
+	c, cancelCreateBucket := context.WithCancel(globalContext)
+	defer cancelCreateBucket()
+
+	isPublic := ctx.Bool("public")
+	contentType := ctx.String("contentType")
+	secondarySPAccs := ctx.String("SecondarySPs")
+
+	opts := gnfdclient.CreateObjectOptions{}
+	opts.IsPublic = isPublic
+	if contentType != "" {
+		opts.ContentType = contentType
+	}
+
+	// set second sp address if provided by user
+	if secondarySPAccs != "" {
+		secondarySplist := strings.Split(secondarySPAccs, ",")
+		addrList := make([]sdk.AccAddress, len(secondarySplist))
+		for idx, addr := range secondarySplist {
+			addrList[idx] = sdk.MustAccAddressFromHex(addr)
+		}
+		opts.SecondarySPAccs = addrList
+	}
+
+	gnfdResp := gnfdClient.CreateObject(c, bucketName, objectName, fileReader, opts)
+	if gnfdResp.Err != nil {
+		fmt.Println("create object fail:", gnfdResp.Err.Error())
+		return err
+	}
+
+	opt := spClient.UploadOption{}
+	contentType = ctx.String("content-type")
+	if contentType != "" {
+		opt.ContentType = contentType
+	}
+
+	res, err := gnfdClient.UploadObject(c, bucketName, objectName, gnfdResp.TxnHash, objectSize, fileReader, opt)
+
+	if err != nil {
+		fmt.Println("upload object fail:", err.Error())
+		return err
+	}
+
+	fmt.Println("upload object successfully:", res.String())
+	fmt.Println("cost time", time.Since(start).Milliseconds(), "ms")
 	return nil
 }
 

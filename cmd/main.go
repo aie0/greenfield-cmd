@@ -61,6 +61,7 @@ func main() {
 		Commands: []*cli.Command{
 			cmdCreateBucket(),
 			cmdPutObj(),
+			cmdPutObjV2(),
 			cmdGetObj(),
 			cmdPreCreateObj(),
 			cmdCalHash(),
