@@ -229,7 +229,7 @@ func createAndPutObject(ctx *cli.Context) error {
 	}
 
 	fmt.Println("upload object successfully:", res.String())
-	fmt.Println("cost time", time.Since(start).Milliseconds(), "ms")
+	fmt.Println("create and put object cost time", time.Since(start).Milliseconds(), "ms")
 	return nil
 }
 

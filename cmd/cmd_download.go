@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/prysmaticlabs/prysm/time"
 	"github.com/urfave/cli/v2"
 )
 
@@ -48,6 +49,7 @@ func getObject(ctx *cli.Context) error {
 		return err
 	}
 
+	start := time.Now()
 	c, cancelCreateBucket := context.WithCancel(globalContext)
 	defer cancelCreateBucket()
 
@@ -73,5 +75,6 @@ func getObject(ctx *cli.Context) error {
 	}
 
 	log.Println("download object inti file:" + filePath)
+	fmt.Println("download cost time", time.Since(start).Milliseconds(), "ms")
 	return nil
 }
