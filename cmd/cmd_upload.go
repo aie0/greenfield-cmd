@@ -10,7 +10,9 @@ import (
 
 	"github.com/bnb-chain/greenfield-go-sdk/client/gnfdclient"
 	spClient "github.com/bnb-chain/greenfield-go-sdk/client/sp"
+	"github.com/bnb-chain/greenfield/sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx"
 
 	"github.com/urfave/cli/v2"
 )
@@ -209,7 +211,9 @@ func createAndPutObject(ctx *cli.Context) error {
 		opts.SecondarySPAccs = addrList
 	}
 
-	gnfdResp := gnfdClient.CreateObject(c, bucketName, objectName, fileReader, opts)
+	broadcastMode := tx.BroadcastMode_BROADCAST_MODE_BLOCK
+	txnOpt := types.TxOption{Mode: &broadcastMode}
+	gnfdResp := gnfdClient.CreateObject(c, bucketName, objectName, fileReader, gnfdclient.CreateObjectOptions{TxOpts: &txnOpt})
 	if gnfdResp.Err != nil {
 		fmt.Println("create object fail:", gnfdResp.Err.Error())
 		return err
