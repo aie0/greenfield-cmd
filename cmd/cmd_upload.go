@@ -225,7 +225,14 @@ func createAndPutObject(ctx *cli.Context) error {
 		opt.ContentType = contentType
 	}
 
-	res, err := gnfdClient.UploadObject(c, bucketName, objectName, gnfdResp.TxnHash, objectSize, fileReader, opt)
+	// Open the referenced file.
+	fileReader2, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer fileReader2.Close()
+
+	res, err := gnfdClient.UploadObject(c, bucketName, objectName, gnfdResp.TxnHash, objectSize, fileReader2, opt)
 
 	if err != nil {
 		fmt.Println("upload object fail:", err.Error())
