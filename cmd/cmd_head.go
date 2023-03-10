@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -48,13 +49,16 @@ func headObject(ctx *cli.Context) error {
 		return err
 	}
 
-	objectInfo, err := client.HeadObject(bucketName, objectName)
+	c, cancelCreateBucket := context.WithCancel(globalContext)
+	defer cancelCreateBucket()
+
+	objectInfo, err := client.HeadObject(c, bucketName, objectName)
 	if err != nil {
 		fmt.Println("headObject fail:", err.Error())
 		return err
 	}
-	fmt.Println("object id:", objectInfo.ObjectId)
-	fmt.Println("object status", objectInfo.Status)
+	fmt.Println("object id:", objectInfo.Id.Uint64())
+	fmt.Println("object status", objectInfo.ObjectStatus)
 	fmt.Println("object size:", objectInfo.Size)
 
 	return nil
@@ -73,12 +77,15 @@ func headBucket(ctx *cli.Context) error {
 		return err
 	}
 
-	bucketInfo, err := client.HeadBucket(bucketName)
+	c, cancelCreateBucket := context.WithCancel(globalContext)
+	defer cancelCreateBucket()
+
+	bucketInfo, err := client.HeadBucket(c, bucketName)
 	if err != nil {
 		fmt.Println("headBucket fail:", err.Error())
 		return err
 	}
-	fmt.Println("bucket id:", bucketInfo.BucketId)
+	fmt.Println("bucket id:", bucketInfo.Id.Uint64())
 	fmt.Println("bucket owner:", bucketInfo.Owner)
 
 	return nil

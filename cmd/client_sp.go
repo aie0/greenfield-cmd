@@ -29,7 +29,7 @@ func ListSP(ctx *cli.Context) error {
 	c, cancelCreateBucket := context.WithCancel(globalContext)
 	defer cancelCreateBucket()
 
-	spInfo, err := client.ListSP(c)
+	spInfo, err := client.ListSP(c, false)
 	if err != nil {
 		fmt.Println("fail to list sp:", err.Error())
 		return err

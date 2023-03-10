@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/bnb-chain/greenfield-go-sdk/client/gnfdclient"
-	spType "github.com/bnb-chain/greenfield/x/sp/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/urfave/cli/v2"
 )
@@ -71,34 +70,11 @@ func createBucket(ctx *cli.Context) error {
 	if paymentAddrStr != "" {
 		opts.PaymentAddress = sdk.MustAccAddressFromHex(paymentAddrStr)
 	}
-
-	request := &spType.QueryStorageProvidersRequest{}
-	chainCtx := context.Background()
-	gnfdRep, err := client.ChainClient.StorageProviders(chainCtx, request)
-	if err != nil {
-		return err
+	if primarySpAddrStr != "" {
+		opts.PrimarySPAddress = sdk.MustAccAddressFromHex(primarySpAddrStr)
 	}
 
-	if primarySpAddrStr == "" {
-		spList := gnfdRep.GetSps()
-		findPrimarySp := false
-		for _, sp := range spList {
-			if sp.GetEndpoint() == client.SPClient.GetURL().Hostname() {
-				findPrimarySp = true
-				primarySpAddrStr = sp.GetOperatorAddress()
-				if sp.Status.String() != "STATUS_IN_SERVICE" {
-					return errors.New("primary sp")
-				}
-				break
-			}
-		}
-		if !findPrimarySp {
-			return errors.New("can not find the right primary sp, please set it using  --primarySP")
-		}
-	}
-
-	primarySpAddr := sdk.MustAccAddressFromHex(primarySpAddrStr)
-	gnfdResp := client.CreateBucket(c, bucketName, primarySpAddr, opts)
+	gnfdResp := client.CreateBucket(c, bucketName, opts)
 	if gnfdResp.Err != nil {
 		return gnfdResp.Err
 	}
