@@ -121,7 +121,7 @@ func uploadObject(ctx *cli.Context) error {
 		opt.ContentType = contentType
 	}
 
-	res, err := s3Client.UploadObject(c, bucketName, objectName, txnhash, objectSize, fileReader, opt)
+	res, err := s3Client.PutObject(c, bucketName, objectName, txnhash, objectSize, fileReader, opt)
 
 	if err != nil {
 		fmt.Println("upload object fail:", err.Error())
