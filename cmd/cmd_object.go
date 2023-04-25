@@ -416,7 +416,7 @@ func getObject(ctx *cli.Context) error {
 		return toCmdErr(err)
 	}
 
-	fmt.Printf("download object %s successfully, the file path is %s,", objectName, filePath)
+	fmt.Printf("download object %s successfully, the file path is %s\n", objectName, filePath)
 
 	return nil
 }
