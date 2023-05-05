@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -250,16 +251,11 @@ func putObject(ctx *cli.Context) error {
 		return err
 	}
 
-	_, err = client.HeadObject(c, bucketName, objectName)
-	if err != nil {
-		time.Sleep(5 * time.Second)
-		_, err = client.HeadObject(c, bucketName, objectName)
-		if err != nil {
-			return toCmdErr(ErrObjectNotCreated)
-		}
-	}
+	fmt.Printf("create object %s on chain finish, txn Hash: %s\n", objectName, txnHash)
 
-	fmt.Printf("create object %s on chain finish \n", objectName)
+	if objectSize == 0 {
+		return nil
+	}
 
 	opt := spClient.PutObjectOption{}
 	if contentType != "" {
@@ -278,7 +274,28 @@ func putObject(ctx *cli.Context) error {
 		return nil
 	}
 
-	fmt.Printf("put object: %s successfully \n", objectName)
+	// Check if object is sealed
+	timeout := time.After(15 * time.Second)
+	ticker := time.NewTicker(2 * time.Second)
+
+	for {
+		select {
+		case <-timeout:
+			return toCmdErr(errors.New("object not sealed after 15 seconds"))
+		case <-ticker.C:
+			headObjOutput, err := client.HeadObject(c, bucketName, objectName)
+			if err != nil {
+				return err
+			}
+
+			if headObjOutput.GetObjectStatus().String() == "OBJECT_STATUS_SEALED" {
+				ticker.Stop()
+				fmt.Printf("put object %s successfully \n", objectName)
+				return nil
+			}
+		}
+	}
+
 	return nil
 }
 
